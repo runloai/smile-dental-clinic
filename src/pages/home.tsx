@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Phone, MapPin, Clock, CheckCircle2, ChevronRight, Menu, X, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -21,9 +21,38 @@ const TIME_SLOTS = [
 
 const WHATSAPP_NUMBER = "919398664723";
 
+// Scroll-reveal hook — animates self + reveal-child/left/right descendants
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('visible');
+          el.querySelectorAll('.reveal-child, .reveal-left, .reveal-right')
+            .forEach(child => child.classList.add('visible'));
+          obs.unobserve(el);
+        }
+      },
+      { threshold: 0.08, rootMargin: '0px 0px -50px 0px' }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
+
 
 
 export default function Home() {
+  const revealAbout = useReveal();
+  const revealServices = useReveal();
+  const revealResults = useReveal();
+  const revealReviews = useReveal();
+  const revealBook = useReveal();
+  const revealContact = useReveal();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -116,11 +145,11 @@ export default function Home() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-8">
-            <button onClick={() => scrollToSection("about")} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-about">About</button>
-            <button onClick={() => scrollToSection("services")} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-services">Services</button>
-            <button onClick={() => scrollToSection("results")} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-results">Transformations</button>
-            <button onClick={() => scrollToSection("book")} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-book">Book</button>
-            <button onClick={() => scrollToSection("contact")} className="text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-contact">Contact</button>
+            <button onClick={() => scrollToSection("about")} className="nav-link text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-about">About</button>
+            <button onClick={() => scrollToSection("services")} className="nav-link text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-services">Services</button>
+            <button onClick={() => scrollToSection("results")} className="nav-link text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-results">Transformations</button>
+            <button onClick={() => scrollToSection("book")} className="nav-link text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-book">Book</button>
+            <button onClick={() => scrollToSection("contact")} className="nav-link text-sm font-medium text-foreground/80 hover:text-primary transition-colors" data-testid="nav-contact">Contact</button>
             <Button className="bg-[#25D366] hover:bg-[#1ebe5d] text-white font-medium px-5 rounded-full gap-2" onClick={() => scrollToSection("book")} data-testid="btn-call-nav">
               <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
@@ -161,7 +190,30 @@ export default function Home() {
 
       <main className="flex-1 pt-24 md:pt-28">
         {/* Hero Section */}
-        <section id="home" className="relative bg-background overflow-hidden pb-16 md:pb-24 lg:pb-32 pt-12 md:pt-16">
+        <section id="home" className="relative overflow-hidden pb-16 md:pb-24 lg:pb-32 pt-12 md:pt-16" style={{background:'hsl(200,30%,97%)'}}>
+          <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+            {/* Diagonal colour wash — visible teal sweep on right */}
+            <div className="absolute inset-0" style={{background:'linear-gradient(118deg,hsl(200,30%,97%) 0%,hsl(200,30%,97%) 40%,hsl(200,50%,93%) 58%,hsl(162,45%,91%) 100%)'}} />
+            {/* Strong teal blob top-right */}
+            <div className="hero-blob-1 absolute -top-24 -right-16 w-[580px] h-[580px] rounded-full" style={{background:'radial-gradient(circle,hsl(200,72%,40%,0.24) 0%,transparent 65%)'}} />
+            {/* Emerald blob bottom-left */}
+            <div className="hero-blob-2 absolute -bottom-24 -left-16 w-[420px] h-[420px] rounded-full" style={{background:'radial-gradient(circle,hsl(162,55%,36%,0.20) 0%,transparent 65%)'}} />
+            {/* Warm gold accent */}
+            <div className="hero-blob-3 absolute top-4 right-1/4 w-[260px] h-[260px] rounded-full" style={{background:'radial-gradient(circle,hsl(38,92%,55%,0.13) 0%,transparent 65%)'}} />
+            {/* Dot mesh */}
+            <div className="absolute inset-0 opacity-[0.045]" style={{backgroundImage:'radial-gradient(circle,hsl(200,72%,26%) 1px,transparent 1px)',backgroundSize:'26px 26px'}} />
+            {/* Triple concentric decorative rings — top right */}
+            <svg aria-hidden className="absolute top-8 right-8 w-52 h-52 opacity-[0.12]" viewBox="0 0 208 208" fill="none">
+              <circle cx="104" cy="104" r="96" stroke="hsl(200,72%,26%)" strokeWidth="1.5" strokeDasharray="6 6"/>
+              <circle cx="104" cy="104" r="70" stroke="hsl(162,55%,36%)" strokeWidth="1"   strokeDasharray="4 8"/>
+              <circle cx="104" cy="104" r="44" stroke="hsl(38,92%,52%)"   strokeWidth="0.8" strokeDasharray="3 9"/>
+            </svg>
+            {/* Bottom-left rings */}
+            <svg aria-hidden className="absolute -bottom-6 left-6 w-36 h-36 opacity-[0.09]" viewBox="0 0 144 144" fill="none">
+              <circle cx="72" cy="72" r="64" stroke="hsl(162,55%,36%)" strokeWidth="1.5" strokeDasharray="5 7"/>
+              <circle cx="72" cy="72" r="42" stroke="hsl(200,72%,26%)" strokeWidth="1"   strokeDasharray="4 8"/>
+            </svg>
+          </div>
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
               <div className="max-w-2xl">
@@ -170,16 +222,18 @@ export default function Home() {
                   Trusted Neighbourhood Clinic
                 </div>
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-foreground leading-[1.1] mb-5">
-                  Precision dentistry with <span className="text-primary italic">warmth</span> and <span className="text-secondary italic">care.</span>
+                  Precision dentistry with{" "}
+                  <span className="italic" style={{background:'linear-gradient(135deg,hsl(200,72%,26%),hsl(162,55%,36%))',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',backgroundClip:'text'}}>warmth</span>{" "}and{" "}
+                  <span className="text-secondary italic">care.</span>
                 </h1>
 
-                {/* Clinic motto */}
+                {/* Clinic motto — shimmering emphasis */}
                 <div className="flex items-center gap-3 mb-7">
-                  <div className="h-px flex-1 bg-primary/20"></div>
-                  <p className="font-serif italic text-xl text-primary font-semibold tracking-wide">
-                    "Your Smile, Our Priority."
+                  <div className="h-px flex-1 bg-gradient-to-r from-transparent to-primary/30"></div>
+                  <p className="motto-shine font-serif italic text-xl font-bold tracking-wide px-2">
+                    “Your Smile, Our Priority.”
                   </p>
-                  <div className="h-px flex-1 bg-primary/20"></div>
+                  <div className="h-px flex-1 bg-gradient-to-l from-transparent to-primary/30"></div>
                 </div>
 
                 <p className="text-lg text-foreground/70 mb-8 max-w-xl leading-relaxed">
@@ -197,11 +251,23 @@ export default function Home() {
                   </Button>
                 </div>
 
-                <div className="mt-12 flex items-center gap-6 text-sm text-foreground/60">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-primary" />
-                    <span>Near Garden City University</span>
-                  </div>
+                {/* Stats strip */}
+                <div className="mt-10 grid grid-cols-3 gap-4 max-w-sm">
+                  {[
+                    { num: '500+', label: 'Happy Patients' },
+                    { num: '5.0★', label: 'Google Rating' },
+                    { num: '10+', label: 'Yrs Experience' },
+                  ].map((s, i) => (
+                    <div key={i} className="bg-white/70 backdrop-blur-sm rounded-2xl p-3 border border-border/40 shadow-sm text-center">
+                      <p className="font-bold text-lg leading-tight stat-number">{s.num}</p>
+                      <p className="text-[11px] text-foreground/50 mt-0.5 leading-tight">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 flex items-center gap-2 text-sm text-foreground/60">
+                  <MapPin className="w-4 h-4 text-primary flex-shrink-0" />
+                  <span>Near Garden City University, Bhattarahalli, Bengaluru</span>
                 </div>
               </div>
 
@@ -219,7 +285,7 @@ export default function Home() {
                   />
 
                   {/* Floating badge — top left */}
-                  <div className="absolute top-5 left-5 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg border border-border/40 flex items-center gap-2">
+                  <div className="badge-float absolute top-5 left-5 bg-white/95 backdrop-blur-sm px-3 py-2 rounded-xl shadow-lg border border-border/40 flex items-center gap-2">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                       <CheckCircle2 className="w-4 h-4 text-primary" />
                     </div>
@@ -230,14 +296,14 @@ export default function Home() {
                   </div>
 
                   {/* Floating badge — bottom right */}
-                  <div className="absolute bottom-5 right-5 bg-white/95 backdrop-blur-sm px-4 py-2.5 rounded-xl shadow-lg border border-border/40">
+                  <div className="badge-float-delay absolute bottom-5 right-5 bg-white/95 backdrop-blur-sm px-4 py-2.5 rounded-xl shadow-lg border border-border/40">
                     <div className="flex items-center gap-2 mb-1">
                       {[1, 2, 3, 4, 5].map((i) => (
-                        <Star key={i} className="w-3 h-3 fill-accent text-accent" />
+                        <Star key={i} className="w-3 h-3 fill-amber-400 text-amber-400" />
                       ))}
                     </div>
                     <p className="text-xs font-bold text-foreground">Trusted by families</p>
-                    <p className="text-[10px] text-foreground/50">Near Garden City University</p>
+                    <p className="text-[10px] text-foreground/50">5.0 ★ on Google</p>
                   </div>
                 </div>
 
@@ -257,18 +323,19 @@ export default function Home() {
         </section>
 
         {/* Doctor & Clinic Profile */}
-        <section id="about" className="py-20 md:py-28 bg-white border-y border-border/40">
-          <div className="container mx-auto px-4 md:px-6">
+        <section id="about" className="py-20 md:py-28 border-y border-border/40" style={{background:'linear-gradient(135deg,hsl(200,30%,97%) 0%,hsl(162,20%,96%) 100%)'}}>
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          <div ref={revealAbout as React.RefObject<HTMLDivElement>} className="reveal container mx-auto px-4 md:px-6">
             <div className="max-w-4xl mx-auto">
               <div className="grid md:grid-cols-5 gap-12 items-center">
-                <div className="md:col-span-2">
+                <div className="md:col-span-2 reveal-left">
                   <div className="aspect-[4/5] bg-muted rounded-2xl overflow-hidden relative shadow-lg">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
                       <span className="text-primary/40 font-serif text-6xl">GP</span>
                     </div>
                   </div>
                 </div>
-                <div className="md:col-span-3">
+                <div className="md:col-span-3 reveal-right">
                   <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Dr. Gnana Prasoona D.V</h2>
                   <p className="text-primary font-medium text-lg mb-6">BDS., PGDHM. • Reg No: A26357</p>
 
@@ -298,8 +365,8 @@ export default function Home() {
         </section>
 
         {/* Services */}
-        <section id="services" className="py-20 md:py-28 bg-background">
-          <div className="container mx-auto px-4 md:px-6">
+        <section id="services" className="py-20 md:py-28" style={{background:'linear-gradient(160deg,hsl(200,25%,98%) 0%,hsl(38,30%,97%) 100%)'}}>
+          <div ref={revealServices as React.RefObject<HTMLDivElement>} className="reveal container mx-auto px-4 md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4">Comprehensive Dental Care</h2>
               <p className="text-foreground/70 text-lg">
@@ -309,16 +376,16 @@ export default function Home() {
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
               {[
-                { name: "Dental Implants", desc: "Permanent, natural-looking replacements for missing teeth." },
-                { name: "Teeth Whitening & Cleaning", desc: "Professional brightening and thorough plaque removal." },
-                { name: "Root Canal Treatment", desc: "Painless procedures to save and restore damaged teeth." },
-                { name: "Dental Crowns & Bridges", desc: "Custom-crafted restorations for strength and aesthetics." },
-                { name: "Braces & Orthodontics", desc: "Effective alignment solutions for a perfectly straight smile." },
-                { name: "Tooth Extraction & Fillings", desc: "Safe removals and durable cavity protection." },
+                { name: "Dental Implants", desc: "Permanent, natural-looking replacements for missing teeth.", icon: "🦷", delay: "reveal-delay-1" },
+                { name: "Teeth Whitening & Cleaning", desc: "Professional brightening and thorough plaque removal.", icon: "✨", delay: "reveal-delay-2" },
+                { name: "Root Canal Treatment", desc: "Painless procedures to save and restore damaged teeth.", icon: "💉", delay: "reveal-delay-3" },
+                { name: "Dental Crowns & Bridges", desc: "Custom-crafted restorations for strength and aesthetics.", icon: "👑", delay: "reveal-delay-4" },
+                { name: "Braces & Orthodontics", desc: "Effective alignment solutions for a perfectly straight smile.", icon: "😁", delay: "reveal-delay-5" },
+                { name: "Tooth Extraction & Fillings", desc: "Safe removals and durable cavity protection.", icon: "🛡️", delay: "reveal-delay-6" },
               ].map((service, i) => (
-                <div key={i} className="bg-white p-8 rounded-2xl shadow-sm border border-border/50 hover:shadow-md transition-shadow group" data-testid={`card-service-${i}`}>
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-colors text-primary">
-                    <CheckCircle2 className="w-6 h-6" />
+                <div key={i} className={`service-card reveal-child ${service.delay} bg-white p-8 rounded-2xl shadow-sm border border-border/50`} data-testid={`card-service-${i}`}>
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6 text-2xl" style={{background:'linear-gradient(135deg,hsl(215,60%,30%,0.1),hsl(175,40%,40%,0.1))'}}>
+                    {service.icon}
                   </div>
                   <h3 className="text-xl font-bold mb-3">{service.name}</h3>
                   <p className="text-foreground/60 text-sm leading-relaxed">{service.desc}</p>
@@ -332,7 +399,7 @@ export default function Home() {
         <section id="results" className="py-20 md:py-28 bg-primary text-primary-foreground relative overflow-hidden">
           <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
 
-          <div className="container mx-auto px-4 md:px-6 relative z-10">
+          <div ref={revealResults as React.RefObject<HTMLDivElement>} className="reveal container mx-auto px-4 md:px-6 relative z-10">
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="text-3xl md:text-5xl font-serif font-bold mb-6 text-white">Smile Transformations</h2>
               <p className="text-primary-foreground/80 text-lg">
@@ -383,8 +450,8 @@ export default function Home() {
         </section>
 
         {/* Patient Reviews */}
-        <section id="reviews" className="py-20 md:py-28 bg-white">
-          <div className="container mx-auto px-4 md:px-6">
+        <section id="reviews" className="py-20 md:py-28" style={{background:'linear-gradient(135deg,hsl(162,25%,97%) 0%,hsl(200,25%,97%) 100%)'}}>
+          <div ref={revealReviews as React.RefObject<HTMLDivElement>} className="reveal container mx-auto px-4 md:px-6">
             <div className="text-center max-w-2xl mx-auto mb-14">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 text-accent font-medium text-sm mb-5">
                 <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
@@ -403,29 +470,33 @@ export default function Home() {
                   badge: "Local Guide · 13 reviews",
                   text: "Doc is very friendly and she clearly explains what the problem is. I am very much satisfied. You'll get all clarity on how your oral hygiene is. Highly highly recommend!",
                   highlight: "Clarity & Friendliness",
+                  delay: "reveal-delay-1",
                 },
                 {
                   name: "Nandu Reddy",
                   badge: "3 reviews",
                   text: "They provided excellent care and good treatment. The doctor explained everything clearly, and the staff were super helpful. The facility was clean and the follow-up appointments were on point.",
                   highlight: "Overall Experience",
+                  delay: "reveal-delay-2",
                 },
                 {
                   name: "Durgam Ramesh",
                   badge: "1 review",
                   text: "I visited three weeks back and had my root canal treatment done. I am very much thankful to Dr. Gnana Prasoona mam for her wonderful job.",
                   highlight: "Root Canal Treatment",
+                  delay: "reveal-delay-3",
                 },
                 {
                   name: "Evishnu Vardhan",
                   badge: "Local Guide · 8 reviews",
                   text: "One of the best dental clinics I ever visited. To get a perfect idea of what's wrong and to get treated well, I suggest this clinic.",
                   highlight: "Best in Class",
+                  delay: "reveal-delay-4",
                 },
               ].map((review, i) => (
                 <div
                   key={i}
-                  className="flex flex-col bg-background rounded-2xl p-6 border border-border/50 shadow-sm hover:shadow-md transition-shadow"
+                  className={`review-card reveal-child ${review.delay} flex flex-col bg-background rounded-2xl p-6 border border-border/50 shadow-sm`}
                   data-testid={`card-review-${i}`}
                 >
                   {/* Stars */}
@@ -484,8 +555,8 @@ export default function Home() {
         </section>
 
         {/* WhatsApp Booking Section */}
-        <section id="book" className="py-20 md:py-28 bg-background">
-          <div className="container mx-auto px-4 md:px-6">
+        <section id="book" className="py-20 md:py-28" style={{background:'linear-gradient(160deg,hsl(200,30%,97%) 0%,hsl(162,20%,97%) 100%)'}}>
+          <div ref={revealBook as React.RefObject<HTMLDivElement>} className="reveal container mx-auto px-4 md:px-6">
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-12">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#25D366]/10 mb-6">
@@ -650,7 +721,7 @@ export default function Home() {
 
         {/* Contact & Location */}
         <section id="contact" className="py-20 md:py-28 bg-white">
-          <div className="container mx-auto px-4 md:px-6">
+          <div ref={revealContact as React.RefObject<HTMLDivElement>} className="reveal container mx-auto px-4 md:px-6">
             <div className="max-w-5xl mx-auto bg-background rounded-3xl p-8 md:p-12 border border-border/50 shadow-sm">
               <div className="grid md:grid-cols-2 gap-12">
                 <div>

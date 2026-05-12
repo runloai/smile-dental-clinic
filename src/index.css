@@ -50,43 +50,43 @@
 }
 
 :root {
-  --background: 40 20% 98%;
-  --foreground: 220 40% 15%;
-  --border: 220 15% 85%;
+  --background: 200 25% 98%;
+  --foreground: 210 45% 14%;
+  --border: 205 20% 84%;
   --card: 0 0% 100%;
-  --card-foreground: 220 40% 15%;
-  --card-border: 220 15% 90%;
+  --card-foreground: 210 45% 14%;
+  --card-border: 205 20% 88%;
   --popover: 0 0% 100%;
-  --popover-foreground: 220 40% 15%;
-  --popover-border: 220 15% 90%;
-  --primary: 215 60% 30%;
+  --popover-foreground: 210 45% 14%;
+  --popover-border: 205 20% 88%;
+  --primary: 200 72% 26%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 175 40% 40%;
+  --secondary: 162 55% 36%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 220 10% 94%;
-  --muted-foreground: 220 20% 45%;
-  --accent: 10 70% 60%;
+  --muted: 205 18% 93%;
+  --muted-foreground: 210 25% 42%;
+  --accent: 38 92% 52%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --input: 220 15% 85%;
-  --ring: 215 60% 30%;
+  --input: 205 20% 84%;
+  --ring: 200 72% 26%;
   --radius: 0.75rem;
 
   --sidebar: 0 0% 100%;
-  --sidebar-foreground: 220 40% 15%;
-  --sidebar-border: 220 15% 90%;
-  --sidebar-primary: 215 60% 30%;
+  --sidebar-foreground: 210 45% 14%;
+  --sidebar-border: 205 20% 88%;
+  --sidebar-primary: 200 72% 26%;
   --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 220 10% 94%;
-  --sidebar-accent-foreground: 220 40% 15%;
-  --sidebar-ring: 215 60% 30%;
+  --sidebar-accent: 205 18% 93%;
+  --sidebar-accent-foreground: 210 45% 14%;
+  --sidebar-ring: 200 72% 26%;
 
-  --chart-1: 215 60% 30%;
-  --chart-2: 175 40% 40%;
-  --chart-3: 10 70% 60%;
-  --chart-4: 40 80% 50%;
-  --chart-5: 280 50% 50%;
+  --chart-1: 200 72% 26%;
+  --chart-2: 162 55% 36%;
+  --chart-3: 38 92% 52%;
+  --chart-4: 280 50% 50%;
+  --chart-5: 10 70% 55%;
 
   --opaque-button-border-intensity: -8;
   --elevate-1: rgba(0,0,0, .03);
@@ -147,4 +147,253 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-serif tracking-tight text-foreground;
   }
+}
+
+/* ─── Scroll-reveal animations ─── */
+/* Base hidden state — GPU composited for perf */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  will-change: opacity, transform;
+  transition:
+    opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+  will-change: auto;
+}
+
+/* Stagger delays for child elements */
+.reveal-child {
+  opacity: 0;
+  transform: translateY(22px);
+  will-change: opacity, transform;
+  transition:
+    opacity 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal-child.visible {
+  opacity: 1;
+  transform: translateY(0);
+  will-change: auto;
+}
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
+.reveal-delay-6 { transition-delay: 0.48s; }
+
+/* Fade from left / right variants */
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-28px);
+  will-change: opacity, transform;
+  transition:
+    opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+  will-change: auto;
+}
+.reveal-right {
+  opacity: 0;
+  transform: translateX(28px);
+  will-change: opacity, transform;
+  transition:
+    opacity 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+  will-change: auto;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-child, .reveal-left, .reveal-right {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/* ─── Animated gradient blobs ─── */
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(30px, -40px) scale(1.08); }
+  66%       { transform: translate(-20px, 20px) scale(0.95); }
+}
+@keyframes blob-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-40px, 30px) scale(1.05); }
+  66%       { transform: translate(20px, -20px) scale(0.97); }
+}
+.hero-blob-1 {
+  animation: blob-float 12s ease-in-out infinite;
+}
+.hero-blob-2 {
+  animation: blob-float-2 15s ease-in-out infinite;
+}
+.hero-blob-3 {
+  animation: blob-float 18s ease-in-out infinite reverse;
+}
+
+/* ─── Floating badge pulse ─── */
+@keyframes badge-float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-6px); }
+}
+.badge-float {
+  animation: badge-float 4s ease-in-out infinite;
+}
+.badge-float-delay {
+  animation: badge-float 4s ease-in-out infinite;
+  animation-delay: 1.5s;
+}
+
+/* ─── Shimmer effect on cards ─── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+/* ─── Service card hover glow ─── */
+.service-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.service-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, hsl(var(--primary)/0.04), hsl(var(--secondary)/0.04));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: inherit;
+}
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px -10px hsl(var(--primary)/0.18);
+}
+.service-card:hover::before {
+  opacity: 1;
+}
+
+/* ─── Review card hover ─── */
+.review-card {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+              box-shadow 0.3s ease;
+}
+.review-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px -8px hsl(var(--primary)/0.14);
+}
+
+/* ─── Stats counter number ─── */
+.stat-number {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Gradient text utility ─── */
+.gradient-text {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(175, 50%, 35%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Wavy section divider ─── */
+.wave-divider {
+  overflow: hidden;
+  line-height: 0;
+}
+
+/* ─── Animated underline on nav ─── */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: hsl(var(--primary));
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ─── Smooth image reveal on load ─── */
+img {
+  transition: opacity 0.4s ease;
+}
+
+/* ─── Hero gradient background ─── */
+.hero-bg {
+  background:
+    radial-gradient(ellipse 100% 80% at 80% 30%, hsl(200,72%,40%,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 70%  60% at 0%  85%, hsl(162,55%,36%,0.13) 0%, transparent 60%),
+    radial-gradient(ellipse 50%  40% at 100% 0%, hsl(38,92%,52%,0.08)  0%, transparent 50%),
+    linear-gradient(150deg,
+      hsl(200,35%,97%) 0%,
+      hsl(195,30%,96%) 35%,
+      hsl(162,20%,96%) 65%,
+      hsl(200,25%,97%) 100%
+    );
+}
+
+/* ─── Motto shimmer ─── */
+@keyframes motto-shimmer {
+  0%   { background-position: -300% center; }
+  100% { background-position:  300% center; }
+}
+.motto-shine {
+  background: linear-gradient(
+    90deg,
+    hsl(215,60%,28%) 0%,
+    hsl(215,60%,28%) 30%,
+    hsl(175,50%,38%) 45%,
+    hsl(40,80%,55%)  50%,
+    hsl(175,50%,38%) 55%,
+    hsl(215,60%,28%) 70%,
+    hsl(215,60%,28%) 100%
+  );
+  background-size: 300% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: motto-shimmer 4s linear infinite;
+}
+
+/* ─── Pulsing dot ─── */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.4); }
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* ─── Scroll indicator arrow ─── */
+@keyframes bounce-down {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
+}
+.bounce-down {
+  animation: bounce-down 1.8s ease-in-out infinite;
 }
