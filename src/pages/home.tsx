@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Phone, MapPin, Clock, CheckCircle2, ChevronRight, Menu, X, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-import beforeAfter2 from "@assets/Gemini_Generated_Image_6zdse46zdse46zds(2)_1778574358783.png";
-import beforeAfter3 from "@assets/Gemini_Generated_Image_6zdse46zdse46zds(3)_1778574358783.png";
+import beforeAfter2 from "@assets/before-after-1.png";
+import beforeAfter3 from "@assets/before-after-2.png";
 
 import heroImage from "@assets/hero-dentist.jpg";
 const HERO_IMAGE = heroImage;
