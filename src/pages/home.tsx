@@ -21,40 +21,11 @@ const TIME_SLOTS = [
 
 const WHATSAPP_NUMBER = "919398664723";
 
-function getClinicStatus(): { open: boolean; label: string } {
-  const now = new Date();
-  // Convert to IST (UTC+5:30)
-  const istOffsetMs = 5.5 * 60 * 60 * 1000;
-  const ist = new Date(now.getTime() + istOffsetMs - now.getTimezoneOffset() * 60 * 1000);
-  const totalMin = ist.getUTCHours() * 60 + ist.getUTCMinutes();
 
-  const morningOpen  = 10 * 60;       // 10:00 AM
-  const morningClose = 13 * 60 + 30;  // 1:30 PM
-  const eveningOpen  = 16 * 60 + 30;  // 4:30 PM
-  const eveningClose = 20 * 60;       // 8:00 PM
-
-  if (totalMin >= morningOpen && totalMin < morningClose) {
-    const closeH = Math.floor(morningClose / 60);
-    const closeM = morningClose % 60;
-    return { open: true, label: `Open · Closes ${closeH}:${closeM === 0 ? "00" : closeM} PM` };
-  }
-  if (totalMin >= eveningOpen && totalMin < eveningClose) {
-    const closeH = Math.floor(eveningClose / 60);
-    return { open: true, label: `Open · Closes ${closeH > 12 ? closeH - 12 : closeH}:00 PM` };
-  }
-  if (totalMin >= morningClose && totalMin < eveningOpen) {
-    return { open: false, label: "Closed · Opens 4:30 PM" };
-  }
-  if (totalMin < morningOpen) {
-    return { open: false, label: "Closed · Opens 10:00 AM" };
-  }
-  return { open: false, label: "Closed · Opens 10:00 AM tomorrow" };
-}
 
 export default function Home() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [clinicStatus, setClinicStatus] = useState(getClinicStatus);
 
   const [form, setForm] = useState({
     name: "",
@@ -69,11 +40,6 @@ export default function Home() {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => setClinicStatus(getClinicStatus()), 60_000);
-    return () => clearInterval(interval);
   }, []);
 
   const scrollToSection = (id: string) => {
@@ -235,12 +201,6 @@ export default function Home() {
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-primary" />
                     <span>Near Garden City University</span>
-                  </div>
-                  <div className="flex items-center gap-2" data-testid="status-clinic-open">
-                    <span className={`w-2 h-2 rounded-full flex-shrink-0 ${clinicStatus.open ? "bg-green-500 animate-pulse" : "bg-red-400"}`}></span>
-                    <span className={clinicStatus.open ? "text-green-600 font-medium" : "text-red-500 font-medium"}>
-                      {clinicStatus.label}
-                    </span>
                   </div>
                 </div>
               </div>
